@@ -1,6 +1,10 @@
 [
-      {
-            "name": "charles", 
-            "email": "charles@email.com"
-      }
+  {
+    "name": "charles",
+    "email": "charles@email.com"
+  },
+  {
+    "name": "gustavo",
+    "email": "gustavo@email.com"
+  }
 ]

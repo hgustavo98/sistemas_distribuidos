@@ -1,9 +1,10 @@
 import json
 from flask import Flask, request, jsonify
 import os
-
+from flask_cors import CORS  # Importa CORS
 
 app = Flask(__name__)
+CORS(app)  # Habilita CORS para todas as rotas
 
 data_file_path = os.path.join(os.path.dirname(__file__), 'data.txt')
 
@@ -48,7 +49,7 @@ def update_record():
     updated = False
     for r in records:
         if r.get('name') == record.get('name'):
-            r.update(record)  # Atualiza todos os campos do registro
+            r.update(record) 
             updated = True
     if not updated:
         return jsonify({'error': 'record not found'}), 404
@@ -81,7 +82,9 @@ def patch_record():
 
 @app.route('/', methods=['OPTIONS'])
 def options_record():
-    return jsonify({"message": "OPTIONS request received"})
+    response = jsonify({"message": "OPTIONS request received"})
+    response.headers['Allow'] = 'GET, POST, PUT, DELETE, PATCH,'
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)
