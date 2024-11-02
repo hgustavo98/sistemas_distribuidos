@@ -6,6 +6,7 @@ import threading
 import queue
 import json
 
+#teste
 # Configurações do MQTT
 broker_address = "25.52.136.150"  # Altere se necessário
 client_id = f"player_{random.randint(0, 1000)}"
