@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import turtle
 import time
 import random
@@ -6,14 +8,14 @@ import threading
 import queue
 import json
 
-#teste
+
 # Configurações do MQTT
-broker_address = "25.52.136.150"  # Altere se necessário
+broker_address = "localhost"  
 client_id = f"player_{random.randint(0, 1000)}"
 client = mqtt.Client(client_id)
 
 # Conectar ao broker MQTT
-client.connect(broker_address)
+client.connect(broker_address, keepalive=60)
 
 # Configuração da tela
 wn = turtle.Screen()
