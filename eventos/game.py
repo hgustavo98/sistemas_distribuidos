@@ -9,34 +9,34 @@ import queue
 import json
 
 
-# Configurações do MQTT
+
 broker_address = "localhost"  
 client_id = f"player_{random.randint(0, 1000)}"
 client = mqtt.Client(client_id)
 
-# Conectar ao broker MQTT
+
 client.connect(broker_address, keepalive=60)
 
-# Configuração da tela
+
 wn = turtle.Screen()
 wn.title("Multiplayer Move Game")
 wn.bgcolor("green")
 wn.setup(width=600, height=600)
-wn.tracer(0)  # Desativa as atualizações da tela
+wn.tracer(0) 
 
-# Dicionário para armazenar jogadores
+
 players = {}
 colors = ["red", "blue", "yellow", "purple", "orange", "pink"]
 message_queue = queue.Queue()
 
-# Função para mover o jogador e publicar sua nova posição
+
 
 
 def move_player(player_id, direction):
     if player_id in players:
         player = players[player_id]
 
-        # Atualiza a posição local
+   
         if direction == "up":
             player['y'] += 10
         elif direction == "down":
@@ -46,7 +46,6 @@ def move_player(player_id, direction):
         elif direction == "right":
             player['x'] += 10
 
-        # Publica a nova posição
         client.publish("game/positions", json.dumps({
             'player_id': player_id,
             'color': player['color'],
@@ -54,18 +53,17 @@ def move_player(player_id, direction):
             'y': player['y']
         }))
 
-# Função para receber mensagens do broker
+
 
 
 def on_message(client, userdata, msg):
     payload = msg.payload.decode()
-    message_queue.put(payload)  # Adiciona a mensagem à fila
+    message_queue.put(payload)  
 
 
 def listen_for_messages():
     client.loop_forever()
 
-# Função para atualizar a tela com as posições dos jogadores
 
 
 def update_display():
@@ -75,7 +73,7 @@ def update_display():
             data = json.loads(payload)
             player_id, color, x, y = data['player_id'], data['color'], data['x'], data['y']
 
-            # Adiciona ou atualiza o jogador
+            
             if player_id not in players:
                 players[player_id] = {'color': color, 'x': x,
                                       'y': y, 'turtle': create_turtle(color)}
@@ -83,10 +81,10 @@ def update_display():
                 players[player_id]['x'] = x
                 players[player_id]['y'] = y
 
-            # Move a tartaruga para a nova posição
+           
             players[player_id]['turtle'].goto(x, y)
 
-        time.sleep(0.1)  # Reduz a frequência de atualização da tela
+        time.sleep(0.1) 
 
 
 def create_turtle(color):
@@ -97,7 +95,7 @@ def create_turtle(color):
     t.goto(0, 0)
     return t
 
-# Adiciona um jogador
+
 
 
 def add_player(color):
@@ -116,32 +114,29 @@ def setup_keyboard_listener():
     wn.onkeypress(lambda: move_player(player_id, "down"), "s")
     wn.onkeypress(lambda: move_player(player_id, "left"), "a")
     wn.onkeypress(lambda: move_player(player_id, "right"), "d")
-    wn.onkeypress(wn.bye, "Escape")  # Fecha o jogo com a tecla Escape
+    wn.onkeypress(wn.bye, "Escape")  
 
 
-# Configurar o cliente MQTT
 client.on_message = on_message
-client.subscribe("game/positions")  # Subscreve a mensagens de posições
+client.subscribe("game/positions")  
 
-# Inicia as threads
-# Thread para ouvir mensagens
+
 threading.Thread(target=listen_for_messages, daemon=True).start()
-# Thread para atualizar a tela
-threading.Thread(target=update_display, daemon=True).start()
-setup_keyboard_listener()  # Configura a escuta do teclado
 
-# Atualiza a tela continuamente
+threading.Thread(target=update_display, daemon=True).start()
+setup_keyboard_listener()  
+
+
 
 
 def update_screen():
     while True:
         wn.update()
-        time.sleep(0.05)  # Ajusta a frequência de atualização da tela
+        time.sleep(0.05)  
 
 
-# Iniciar a atualização da tela
 threading.Thread(target=update_screen, daemon=True).start()
 
-wn.mainloop()  # Inicia o loop principal do turtle
+wn.mainloop() 
 
 
